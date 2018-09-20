@@ -1,0 +1,114 @@
+package com.gmail.zayarnyukpm.defectiveness;
+
+import java.io.IOException;
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
+
+import com.gmail.zayarnyukpm.Prediction;
+import com.gmail.zayarnyukpm.classes.DefCalcThread;
+import com.gmail.zayarnyukpm.classes.GraphicPanel;
+import javafx.embed.swing.JFXPanel;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+
+public class Defectiveness {
+	
+	private Prediction whoCall;
+	public static Defectiveness program;
+	JFrame defectFrame;
+	JFXPanel jFXPanel;
+	BorderPane root;
+	GraphicPanel graph1;
+	GraphicPanel graph2;
+	
+	
+	@FXML public TextField timeField;
+	@FXML public TextField pDefField;
+	@FXML public TextField pFField;
+	@FXML public TextField fRaiteField;
+	@FXML public HBox graphicBox;
+		
+	public Defectiveness(){
+	}
+		
+	public Defectiveness(Prediction whoCall){
+		this();
+		this.whoCall=whoCall;
+	}
+	
+	public void go(){
+		defectFrame = new JFrame("Defectiveness Prediction");
+		jFXPanel = new JFXPanel();
+		initFX(jFXPanel);
+		
+		graph1 = new GraphicPanel((int) graphicBox.getHeight(), (int) graphicBox.getWidth()/2);
+		graph1 = new GraphicPanel((int) graphicBox.getHeight(), (int) graphicBox.getWidth()/2);
+		//graph1 = new GraphicPanel(400, 400);
+		//graph1 = new GraphicPanel(400, 400);
+		
+		defectFrame.add(jFXPanel);
+		defectFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		defectFrame.pack();
+		//defectFrame.setSize(jFXPanel.getWidth(), jFXPanel.getHeight());
+		defectFrame.setLocationRelativeTo(null);
+		defectFrame.setVisible(true);
+		
+		
+                
+
+	}
+	
+	private void initFX(JFXPanel panel){
+		
+		try {
+			root = (BorderPane) FXMLLoader.load(getClass().getResource("Def.fxml"));
+			Scene scene = new Scene(root,root.getPrefWidth(),root.getPrefHeight());
+			scene.getStylesheets().add(getClass().getResource("Def.css").toExternalForm());
+		    panel.setScene(scene);
+		    panel.setSize((int)root.getPrefWidth(), (int) root.getPrefHeight());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	
+	public void buttonClickHendler(ActionEvent evt){
+		switch (((Button)evt.getSource()).getText()){
+			case "<-Back": returnAndClose(); break;
+			case "Save Graph": saveGraphics(); break;
+			case "Start": start(); break;
+		}
+	}
+	
+	public void returnAndClose(){
+		whoCall.runFrame.setVisible(true);
+		defectFrame.setVisible(false);
+		defectFrame.dispose();
+		whoCall.returnBack();
+	}
+	
+	public void saveGraphics(){
+		
+	}
+	
+	public void start(){
+		DefCalcThread tr = new DefCalcThread(graphicBox, timeField, pDefField, pFField, fRaiteField, graph1, graph2);
+		tr.start();
+	}
+	
+	public static void main(String[] args){
+		Defectiveness d = new Defectiveness();
+		d.go();
+	}
+	
+}
+
